@@ -20,7 +20,7 @@ import com.zeroc.Ice.Util;
 import com.zeroc.IceGrid.QueryPrx;
 import Demo.HelloPrx;
 
-public class Client
+public class Client implements IntegrationMethod
 {
 
     public static void main(String[] args)
