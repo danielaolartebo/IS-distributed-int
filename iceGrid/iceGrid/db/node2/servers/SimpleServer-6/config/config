@@ -1,0 +1,14 @@
+# Configuration file (05/24/24 11:44:43.013)
+
+# Server configuration
+Ice.Admin.ServerId=SimpleServer-6
+Ice.Admin.Endpoints=tcp -h localhost
+Ice.ProgramName=SimpleServer-6
+# Object adapter Hello
+Hello.Endpoints=tcp -h localhost\ 
+Hello.AdapterId=SimpleServer-6.Hello
+# Server descriptor properties
+Identity=hello-6
+Ice.StdErr=db/node2/logs/SimpleServer-6.err
+Ice.StdOut=db/node2/logs/SimpleServer-6.out
+Ice.Default.Locator=DemoIceGrid/Locator:default -h localhost -p 4061

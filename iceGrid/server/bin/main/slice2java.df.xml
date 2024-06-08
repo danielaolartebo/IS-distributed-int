@@ -1,0 +1,16 @@
+<state>
+  <timestamp value='1717802525748' />
+  <sourceSet name='default'>
+    <source name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Service.ice'>
+      <file name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Server\build\generated-src\Demo\Hello.java' />
+      <file name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Server\build\generated-src\Demo\Worker.java' />
+      <file name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Server\build\generated-src\Demo\HelloPrx.java' />
+      <file name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Server\build\generated-src\Demo\_HelloPrxI.java' />
+      <file name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Server\build\generated-src\Demo\WorkerPrx.java' />
+      <file name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Server\build\generated-src\Demo\_WorkerPrxI.java' />
+    </source>
+    <source name='C:\Users\sebas\Downloads\iceGrid\iceGrid\Service2.ice' />
+    <arg value='C:\Program Files\ZeroC\Ice-3.7.10\\bin\slice2java.exe' />
+    <arg value='-IC:\Program Files\ZeroC\Ice-3.7.10\\slice' />
+  </sourceSet>
+</state>

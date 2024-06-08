@@ -1,0 +1,42 @@
+<!-- Copyright (c) ZeroC, Inc. All rights reserved. -->
+
+<icegrid>
+
+  <application name="Simple">
+   <node name="node1">
+      <server id="SimpleServer" exe="java" activation="on-demand">
+        <option>-jar</option>
+        <option>../server/build/libs/server.jar</option>
+        <adapter name="Hello" endpoints="tcp -h localhost">
+          <object identity="hello" type="::Demo::Hello" property="Identity"/>
+        </adapter>
+        <property name="Ice.Threadpool.Serve.Size" value="10"/>
+      </server>
+       <server id="SimpleServer1" exe="java" activation="on-demand">
+        <option>-jar</option>
+        <option>../server/build/libs/server.jar</option>
+        <adapter name="Hello" endpoints="tcp -h localhost">
+          <object identity="hello1" type="::Demo::Hello" property="Identity"/>
+        </adapter>
+      </server>
+      <server id="SimpleServer2" exe="java" activation="on-demand">
+        <option>-jar</option>
+        <option>../server/build/libs/server.jar</option>
+        <adapter name="Hello" endpoints="tcp -h localhost">
+          <object identity="hello2" type="::Demo::Hello" property="Identity"/>
+        </adapter>
+      </server>
+    </node>
+    <node name="node2">
+      <server id="SimpleServer3" exe="java" activation="on-demand">
+        <option>-jar</option>
+        <option>../server/build/libs/server.jar</option>
+        <adapter name="Hello" endpoints="tcp -h localhost">
+          <object identity="hello3" type="::Demo::Hello" property="Identity"/>
+        </adapter>
+        <property name="Ice.ThreadPool.Serve.Size" value="10"/>
+      </server>
+    </node>
+  </application>
+
+</icegrid>
