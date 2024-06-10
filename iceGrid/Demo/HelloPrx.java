@@ -17,24 +17,102 @@ package Demo;
 
 public interface HelloPrx extends com.zeroc.Ice.ObjectPrx
 {
-    default void processRequest()
+    default void partialResponse(double result)
     {
-        processRequest(com.zeroc.Ice.ObjectPrx.noExplicitContext);
+        partialResponse(result, com.zeroc.Ice.ObjectPrx.noExplicitContext);
     }
 
-    default void processRequest(java.util.Map<String, String> context)
+    default void partialResponse(double result, java.util.Map<String, String> context)
     {
-        _iceI_processRequestAsync(context, true).waitForResponse();
+        _iceI_partialResponseAsync(result, context, true).waitForResponse();
     }
 
-    default java.util.concurrent.CompletableFuture<Void> processRequestAsync()
+    default java.util.concurrent.CompletableFuture<Void> partialResponseAsync(double result)
     {
-        return _iceI_processRequestAsync(com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+        return _iceI_partialResponseAsync(result, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
     }
 
-    default java.util.concurrent.CompletableFuture<Void> processRequestAsync(java.util.Map<String, String> context)
+    default java.util.concurrent.CompletableFuture<Void> partialResponseAsync(double result, java.util.Map<String, String> context)
     {
-        return _iceI_processRequestAsync(context, false);
+        return _iceI_partialResponseAsync(result, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_result -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_partialResponseAsync(double iceP_result, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "partialResponse", null, sync, null);
+        f.invoke(false, context, null, ostr -> {
+                     ostr.writeDouble(iceP_result);
+                 }, null);
+        return f;
+    }
+
+    default String request(WorkerPrx wk, String request)
+    {
+        return request(wk, request, com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default String request(WorkerPrx wk, String request, java.util.Map<String, String> context)
+    {
+        return _iceI_requestAsync(wk, request, context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<java.lang.String> requestAsync(WorkerPrx wk, String request)
+    {
+        return _iceI_requestAsync(wk, request, com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<java.lang.String> requestAsync(WorkerPrx wk, String request, java.util.Map<String, String> context)
+    {
+        return _iceI_requestAsync(wk, request, context, false);
+    }
+
+    /**
+     * @hidden
+     * @param iceP_wk -
+     * @param iceP_request -
+     * @param context -
+     * @param sync -
+     * @return -
+     **/
+    default com.zeroc.IceInternal.OutgoingAsync<java.lang.String> _iceI_requestAsync(WorkerPrx iceP_wk, String iceP_request, java.util.Map<String, String> context, boolean sync)
+    {
+        com.zeroc.IceInternal.OutgoingAsync<java.lang.String> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "request", null, sync, null);
+        f.invoke(true, context, null, ostr -> {
+                     ostr.writeProxy(iceP_wk);
+                     ostr.writeString(iceP_request);
+                 }, istr -> {
+                     String ret;
+                     ret = istr.readString();
+                     return ret;
+                 });
+        return f;
+    }
+
+    default String getTask()
+    {
+        return getTask(com.zeroc.Ice.ObjectPrx.noExplicitContext);
+    }
+
+    default String getTask(java.util.Map<String, String> context)
+    {
+        return _iceI_getTaskAsync(context, true).waitForResponse();
+    }
+
+    default java.util.concurrent.CompletableFuture<java.lang.String> getTaskAsync()
+    {
+        return _iceI_getTaskAsync(com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+    }
+
+    default java.util.concurrent.CompletableFuture<java.lang.String> getTaskAsync(java.util.Map<String, String> context)
+    {
+        return _iceI_getTaskAsync(context, false);
     }
 
     /**
@@ -43,10 +121,14 @@ public interface HelloPrx extends com.zeroc.Ice.ObjectPrx
      * @param sync -
      * @return -
      **/
-    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_processRequestAsync(java.util.Map<String, String> context, boolean sync)
+    default com.zeroc.IceInternal.OutgoingAsync<java.lang.String> _iceI_getTaskAsync(java.util.Map<String, String> context, boolean sync)
     {
-        com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "processRequest", com.zeroc.Ice.OperationMode.Idempotent, sync, null);
-        f.invoke(false, context, null, null, null);
+        com.zeroc.IceInternal.OutgoingAsync<java.lang.String> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getTask", null, sync, null);
+        f.invoke(true, context, null, null, istr -> {
+                     String ret;
+                     ret = istr.readString();
+                     return ret;
+                 });
         return f;
     }
 

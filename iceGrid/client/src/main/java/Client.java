@@ -2,6 +2,10 @@
 // Copyright (c) ZeroC, Inc. All rights reserved.
 //
 
+//
+// Copyright (c) ZeroC, Inc. All rights reserved.
+//
+
 import java.beans.Expression;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,14 +20,22 @@ import javax.script.ScriptException;
 import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.LocalException;
 import com.zeroc.Ice.NotRegisteredException;
+import com.zeroc.Ice.ObjectAdapter;
+import com.zeroc.Ice.ObjectPrx;
+import com.zeroc.Ice.Properties;
 import com.zeroc.Ice.Util;
 import com.zeroc.IceGrid.QueryPrx;
+import com.zeroc.Ice.Current;
+import com.zeroc.Ice.Identity;
+import Demo.Hello;
 import Demo.HelloPrx;
+import Demo.WorkerPrx;
 
-public class Client
+public class Client 
 {
 
-    public static void main(String[] args)
+    private  HelloPrx hello;
+    public void main(String[] args)
     {
         int status = 0;
         java.util.List<String> extraArgs = new java.util.ArrayList<>();
@@ -49,86 +61,29 @@ public class Client
         System.exit(status);
     }
 
-    private static int run(Communicator communicator)
+    private  int run(Communicator communicator)
     {
-        //
-        // First we try to connect to the object with the `hello'
-        // identity. If it's not registered with the registry, we
-        // search for an object with the ::Demo::Hello type.
-        //
-        HelloPrx hello = null;
         QueryPrx query = QueryPrx.checkedCast(communicator.stringToProxy("DemoIceGrid/Query"));
         hello = HelloPrx.checkedCast(query.findObjectByType("::Demo::Hello"));
-        // try
-        // {
-        //     hello = HelloPrx.checkedCast(communicator.stringToProxy("hello"));
-        // }
-        // catch(NotRegisteredException ex)
 
-        // }
         if(hello == null)
         {
             System.err.println("couldn't find a `::Demo::Hello' object");
             return 1;
         }
-            
-            
+
         
-            hello = HelloPrx.checkedCast(query.findObjectByType("::Demo::Hello"));
-        
-       
+        com.zeroc.Ice.ObjectAdapter adapter = communicator.createObjectAdapter("Worker");
+        com.zeroc.Ice.Object object = new WorkerI(hello);
+        com.zeroc.Ice.ObjectPrx objPrx= adapter.add(object, com.zeroc.Ice.Util.stringToIdentity("worker"));
+        adapter.activate();
+        WorkerPrx workerPrx = Demo.WorkerPrx.uncheckedCast(objPrx);
+
+        hello.request(workerPrx, "connect");
+
+        communicator.waitForShutdown();
 
         return 0;
     }
 
-    public static double integrateTrapezium(DoubleFunction<Double> f, double lowerBound, double upperBound, int numIntervals) {
-        double sum = 0;
-        double h = (upperBound - lowerBound) / numIntervals;
-
-        for (int i = 0; i < numIntervals; i++) {
-            double x0 = lowerBound + i * h;
-            double x1 = lowerBound + (i + 1) * h;
-            double y0 = f.apply(x0);
-            double y1 = f.apply(x1);
-            double yMid = f.apply(x0 + (h / 2));
-
-            sum += (h / 2) * (y0 + 2 * yMid + y1);
-        }
-
-        return sum;
-    }
-
-    public void montecarlo(DoubleFunction<Double> f, double lowerBound, double upperBound){
-        // Implement Monte Carlo method
-        int numSamples = 10000; // Number of random samples
-        double sum = 0;
-        for (int i = 0; i < numSamples; i++) {
-            double x = Math.random() * (upperBound - lowerBound) + lowerBound; // Random value within the bounds
-            double y = f.apply(x); // Evaluate function at random point
-            sum += y;
-        }
-        double resultMonteCarlo = sum / numSamples * (upperBound - lowerBound); // Approximate integral
-        System.out.println("Monte Carlo method result: " + resultMonteCarlo);
-    }
-
-
-    public static double integrateSimpson(DoubleFunction<Double> f, double lowerBound, double upperBound, int numIntervals) {
-        double sum = 0;
-        double h = (upperBound - lowerBound) / numIntervals;
-
-        // Evaluate function at endpoints and odd/even midpoints of intervals
-        for (int i = 0; i < numIntervals; i++) {
-            double x0 = lowerBound + i * h;
-            double x1 = lowerBound + (i + 1) * h;
-            double y0 = f.apply(x0);
-            double y1 = f.apply(x1);
-
-            if (i % 2 == 0) { // Even interval
-                sum += h * (y0 + 2 * f.apply(x0 + (h / 2)) + y1);
-            } else { // Odd interval
-                sum += h * (4 * f.apply(x0 + (h / 2)) + y0 + y1);
-            }
-        }
-        return sum / 6; // Divide by 6 to get the actual integral value
-    }
 }

@@ -17,7 +17,11 @@ package Demo;
 
 public interface Hello extends com.zeroc.Ice.Object
 {
-    void processRequest(com.zeroc.Ice.Current current);
+    void partialResponse(double result, com.zeroc.Ice.Current current);
+
+    String request(WorkerPrx wk, String request, com.zeroc.Ice.Current current);
+
+    String getTask(com.zeroc.Ice.Current current);
 
     void shutdown(com.zeroc.Ice.Current current);
 
@@ -52,12 +56,56 @@ public interface Hello extends com.zeroc.Ice.Object
      * @param current -
      * @return -
     **/
-    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_processRequest(Hello obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_partialResponse(Hello obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
     {
-        com.zeroc.Ice.Object._iceCheckMode(com.zeroc.Ice.OperationMode.Idempotent, current.mode);
-        inS.readEmptyParams();
-        obj.processRequest(current);
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        double iceP_result;
+        iceP_result = istr.readDouble();
+        inS.endReadParams();
+        obj.partialResponse(iceP_result, current);
         return inS.setResult(inS.writeEmptyParams());
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_request(Hello obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        com.zeroc.Ice.InputStream istr = inS.startReadParams();
+        WorkerPrx iceP_wk;
+        String iceP_request;
+        iceP_wk = WorkerPrx.uncheckedCast(istr.readProxy());
+        iceP_request = istr.readString();
+        inS.endReadParams();
+        String ret = obj.request(iceP_wk, iceP_request, current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeString(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
+    }
+
+    /**
+     * @hidden
+     * @param obj -
+     * @param inS -
+     * @param current -
+     * @return -
+    **/
+    static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_getTask(Hello obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+    {
+        com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
+        inS.readEmptyParams();
+        String ret = obj.getTask(current);
+        com.zeroc.Ice.OutputStream ostr = inS.startWriteParams();
+        ostr.writeString(ret);
+        inS.endWriteParams(ostr);
+        return inS.setResult(ostr);
     }
 
     /**
@@ -78,11 +126,13 @@ public interface Hello extends com.zeroc.Ice.Object
     /** @hidden */
     final static String[] _iceOps =
     {
+        "getTask",
         "ice_id",
         "ice_ids",
         "ice_isA",
         "ice_ping",
-        "processRequest",
+        "partialResponse",
+        "request",
         "shutdown"
     };
 
@@ -101,25 +151,33 @@ public interface Hello extends com.zeroc.Ice.Object
         {
             case 0:
             {
-                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
+                return _iceD_getTask(this, in, current);
             }
             case 1:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_id(this, in, current);
             }
             case 2:
             {
-                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_ids(this, in, current);
             }
             case 3:
             {
-                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_isA(this, in, current);
             }
             case 4:
             {
-                return _iceD_processRequest(this, in, current);
+                return com.zeroc.Ice.Object._iceD_ice_ping(this, in, current);
             }
             case 5:
+            {
+                return _iceD_partialResponse(this, in, current);
+            }
+            case 6:
+            {
+                return _iceD_request(this, in, current);
+            }
+            case 7:
             {
                 return _iceD_shutdown(this, in, current);
             }

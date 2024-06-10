@@ -17,24 +17,24 @@ package Demo;
 
 public interface WorkerPrx extends com.zeroc.Ice.ObjectPrx
 {
-    default void getTask()
+    default void launch()
     {
-        getTask(com.zeroc.Ice.ObjectPrx.noExplicitContext);
+        launch(com.zeroc.Ice.ObjectPrx.noExplicitContext);
     }
 
-    default void getTask(java.util.Map<String, String> context)
+    default void launch(java.util.Map<String, String> context)
     {
-        _iceI_getTaskAsync(context, true).waitForResponse();
+        _iceI_launchAsync(context, true).waitForResponse();
     }
 
-    default java.util.concurrent.CompletableFuture<Void> getTaskAsync()
+    default java.util.concurrent.CompletableFuture<Void> launchAsync()
     {
-        return _iceI_getTaskAsync(com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
+        return _iceI_launchAsync(com.zeroc.Ice.ObjectPrx.noExplicitContext, false);
     }
 
-    default java.util.concurrent.CompletableFuture<Void> getTaskAsync(java.util.Map<String, String> context)
+    default java.util.concurrent.CompletableFuture<Void> launchAsync(java.util.Map<String, String> context)
     {
-        return _iceI_getTaskAsync(context, false);
+        return _iceI_launchAsync(context, false);
     }
 
     /**
@@ -43,9 +43,9 @@ public interface WorkerPrx extends com.zeroc.Ice.ObjectPrx
      * @param sync -
      * @return -
      **/
-    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_getTaskAsync(java.util.Map<String, String> context, boolean sync)
+    default com.zeroc.IceInternal.OutgoingAsync<Void> _iceI_launchAsync(java.util.Map<String, String> context, boolean sync)
     {
-        com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "getTask", null, sync, null);
+        com.zeroc.IceInternal.OutgoingAsync<Void> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "launch", null, sync, null);
         f.invoke(false, context, null, null, null);
         return f;
     }

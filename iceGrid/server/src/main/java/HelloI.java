@@ -1,63 +1,48 @@
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+//
+// Copyright (c) ZeroC, Inc. All rights reserved.
+//
+
 import com.zeroc.Ice.Current;
-import java.util.function.DoubleFunction;
+
 import Demo.Hello;
+import Demo.WorkerPrx;
 
 public class HelloI implements Hello
 {
-    private final ExecutorService threadPool;
-    private final int numberOfWorkers;
-    private final IntegrationMethod integrationMethod;
-
-    public HelloI(int numberOfWorkers, IntegrationMethod integrationMethod) {
-        this.numberOfWorkers = numberOfWorkers;
-        this.threadPool = Executors.newFixedThreadPool(numberOfWorkers);
-        this.integrationMethod = integrationMethod;
+    public HelloI(String name)
+    {
+        _name = name;
     }
 
-    public double integrate(String method, DoubleFunction<Double> f, double lowerBound, double upperBound, int numIntervals) {
-        int numSubIntervals = numberOfWorkers;
-        double intervalLength = (upperBound - lowerBound) / numSubIntervals;
-        Future<Double>[] results = new Future[numSubIntervals];
+    
+    private final String _name;
 
-        for (int i = 0; i < numSubIntervals; i++) {
-            double subLowerBound = lowerBound + i * intervalLength;
-            double subUpperBound = subLowerBound + intervalLength;
-            results[i] = threadPool.submit(() -> integrateSubInterval(method, f, subLowerBound, subUpperBound, numIntervals / numSubIntervals));
-        }
 
-        double result = 0;
-        for (int i = 0; i < numSubIntervals; i++) {
-            try {
-                result += results[i].get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
+    @Override
+    public void partialResponse(double result, Current current) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'partialResponse'");
     }
 
-    private double integrateSubInterval(String method, DoubleFunction<Double> f, double lowerBound, double upperBound, int numIntervals) {
-        switch (method.toLowerCase()) {
-            case "trapezium":
-                return integrationMethod.integrateTrapezium(f, lowerBound, upperBound, numIntervals);
-            case "simpson":
-                return integrationMethod.integrateSimpson(f, lowerBound, upperBound, numIntervals);
-            case "montecarlo":
-                return integrationMethod.montecarlo(f, lowerBound, upperBound);
-            default:
-                throw new IllegalArgumentException("Unknown integration method: " + method);
-        }
+
+    @Override
+    public String request(WorkerPrx wk, String request, Current current) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'request'");
     }
 
-    public static void main(String[] args) {
-        Client client = new Client();
-        HelloI hello = new HelloI(4, client);
-        DoubleFunction<Double> function = x -> x * x; // funcion de ejemplooo
-        double result = hello.integrate("simpson", function, 0, 1, 100);
-        System.out.println("Integral result: " + result);
+
+    @Override
+    public void shutdown(Current current) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'shutdown'");
+    }
+
+
+    @Override
+    public String getTask(Current current) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTask'");
     }
 
 }

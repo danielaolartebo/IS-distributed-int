@@ -1,12 +1,16 @@
 module Demo
 {
-    interface Hello
-    {
-        idempotent void processRequest();
-        void shutdown();
-    }
+   
     interface Worker
     {
-        void getTask();
+        void launch();
+    }
+    
+    interface Hello
+    {
+        void partialResponse(double result);
+        string request(Worker* wk, string request);
+        string getTask();
+        void shutdown();
     }
 }
