@@ -1,6 +1,7 @@
 import java.util.function.DoubleFunction;
 import java.util.function.Function;
 
+import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.Current;
 
 import Demo.HelloPrx;
@@ -9,67 +10,52 @@ import Demo.WorkerPrx;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 
-public class WorkerI implements Worker{
+public class WorkerI implements Worker {
 
     private HelloPrx hello;
     private WorkerPrx wk;
     private int id;
-    
-    
-    public  void launch(Current current){
+    private com.zeroc.Ice.Communicator communicator;
 
+    public void launch(Current current) {
+
+        System.out.println("launch received");
         wgetTask();
     }
 
-    public void wgetTask(){
+    public void wgetTask() {
         hello.getTask(wk);
     }
 
-    
-    public void getResponse(String task, Current current){
+    public void getResponse(String task, Current current) {
 
-        boolean continues=true;
-
-        if(!task.equalsIgnoreCase("There is no more tasks")){
-            
+        if (task.equalsIgnoreCase("exit")) {
+            shutdown();
+            System.out.println("Cliente desconectado");
+        } else if (!task.equalsIgnoreCase("There is no more tasks")) {
+            System.out.println("2ndo if");
             String[] parts = task.split(":");
-            System.out.println("Tarea :"+parts[1]);
-            //DoubleFunction<Double> f= (x) -> Double.parseDouble(parts[1].replace("x", String.valueOf(x)));
             Function<Double, Double> f = parseFunction(parts[1]);
             f = transformFunction(f);
             double lowerBound = Double.parseDouble(parts[2]);
             double upperBound = Double.parseDouble(parts[3]);
-            int numIntervals =  Integer.parseInt(parts[4]);
+            int numIntervals = Integer.parseInt(parts[4]);
             String method = parts[0];
 
-            if(method.equalsIgnoreCase("simpson")){
+            if (method.equalsIgnoreCase("simpson")) {
                 hello.partialResponse(integrateSimpson(f, lowerBound, upperBound, numIntervals));
-            }else if(method.equalsIgnoreCase("trapezium")){
+            } else if (method.equalsIgnoreCase("trapezium")) {
                 hello.partialResponse(integrateTrapezium(f, lowerBound, upperBound, numIntervals));
-            }else{
+            } else if (method.equalsIgnoreCase("puntomedio")) {
                 hello.partialResponse(integratePuntoMedio(f, lowerBound, upperBound, numIntervals));
+            } else {
+                System.out.println("no encontro a ningun metodo");
             }
-                
-            
-        }else{
-            hello.shutdown(id);
-            continues = false;
-            System.out.println("Is shutdown");
-
         }
-
-        if(continues){
-            wgetTask();
-            System.out.println("Otro ciclo");
-        } /* else
-            System.exit(0);*/
-
-        
 
     }
 
-    
-    public void getConnect(String connection, Current current){
+    public void getConnect(String connection, Current current) {
         System.out.println(connection);
         id = Integer.parseInt(connection.split(":")[1]);
     }
@@ -109,7 +95,7 @@ public class WorkerI implements Worker{
 
         return (h / 3) * sum;
     }
-    
+
     private double integrateTrapezium(Function<Double, Double> f, double a, double b, int n) {
         double h = (b - a) / n;
         double sum = (f.apply(a) + f.apply(b)) / 2.0;
@@ -133,34 +119,28 @@ public class WorkerI implements Worker{
         return h * sum;
     }
 
-
-    /*public static double integrateSimpson(DoubleFunction<Double> f, double lowerBound, double upperBound, int numIntervals) {
-        double sum = 0;
-        double h = (upperBound - lowerBound) / numIntervals;
-
-        // Evaluate function at endpoints and odd/even midpoints of intervals
-        for (int i = 0; i < numIntervals; i++) {
-            double x0 = lowerBound + i * h;
-            double x1 = lowerBound + (i + 1) * h;
-            double y0 = f.apply(x0);
-            double y1 = f.apply(x1);
-
-            if (i % 2 == 0) { // Even interval
-                sum += h * (y0 + 2 * f.apply(x0 + (h / 2)) + y1);
-            } else { // Odd interval
-                sum += h * (4 * f.apply(x0 + (h / 2)) + y0 + y1);
-            }
-        }
-        return sum / 6; // Divide by 6 to get the actual integral value
-    }*/
-
-
     public void setHelloProxy(HelloPrx hello2) {
         hello = hello2;
     }
 
-    public void setWorkerProxy(WorkerPrx wk){
+    public void setWorkerProxy(WorkerPrx wk) {
         this.wk = wk;
+    }
+
+    public void setCommunicator(com.zeroc.Ice.Communicator communicator) {
+        this.communicator = communicator;
+    }
+
+    public void shutdown() {
+        try {
+            if (wk != null) {
+                communicator.shutdown();
+                System.out.println("Cliente desconectado");
+            }
+        } catch (Exception e) {
+            System.err.println("Error al desconectar el cliente: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
 }
