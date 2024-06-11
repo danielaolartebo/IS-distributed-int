@@ -35,8 +35,8 @@ public class WorkerI implements Worker {
         } else if (!task.equalsIgnoreCase("There is no more tasks")) {
             System.out.println("2ndo if");
             String[] parts = task.split(":");
-            Function<Double, Double> f = parseFunction(parts[1]);
-            f = transformFunction(f);
+            DoubleFunction<Double> f = parseFunction(parts[1]);
+            //f = transformFunction(f);
             double lowerBound = Double.parseDouble(parts[2]);
             double upperBound = Double.parseDouble(parts[3]);
             int numIntervals = Integer.parseInt(parts[4]);
@@ -60,10 +60,10 @@ public class WorkerI implements Worker {
         id = Integer.parseInt(connection.split(":")[1]);
     }
 
-    private Function<Double, Double> parseFunction(String expression) {
+    private DoubleFunction<Double> parseFunction(String expression) {
         return (x) -> {
             Expression e = new ExpressionBuilder(expression)
-                    .variables("x")
+                    .variable("x")
                     .build()
                     .setVariable("x", x);
             return e.evaluate();
@@ -77,46 +77,49 @@ public class WorkerI implements Worker {
         };
     }
 
-    private double integrateSimpson(Function<Double, Double> f, double a, double b, int n) {
-        if (n % 2 != 0) {
-            throw new IllegalArgumentException("El número de intervalos n debe ser par.");
+    private double integrateSimpson(DoubleFunction<Double> f, double a, double b, int n) {
+        double h = (b - a) / n;  // Paso
+        double sum = 0.0;
+
+        for (int i = 0; i <= n; i++) {
+            double x = a + i * h;
+            double fx = f.apply(x); // Evaluar la función en x
+
+            // Agregar a la suma considerando los coeficientes de la regla de Simpson
+            sum += (i == 0 || i == n ? fx : (i % 2 == 0 ? 2 * fx : 4 * fx));
         }
 
-        double h = (b - a) / n;
-        double sum = f.apply(a) + f.apply(b);
-
-        for (int i = 1; i < n; i += 2) {
-            sum += 4 * f.apply(a + i * h);
-        }
-
-        for (int i = 2; i < n - 1; i += 2) {
-            sum += 2 * f.apply(a + i * h);
-        }
-
-        return (h / 3) * sum;
+        // Aplicar la regla de Simpson
+        double result =  (h / 3) * sum;
+        System.out.println("Resultado Simpson: "+result);
+        return result;
+        
     }
 
-    private double integrateTrapezium(Function<Double, Double> f, double a, double b, int n) {
-        double h = (b - a) / n;
-        double sum = (f.apply(a) + f.apply(b)) / 2.0;
-
-        for (int i = 1; i < n; i++) {
-            sum += f.apply(a + i * h);
-        }
-
-        return h * sum;
-    }
-
-    private double integratePuntoMedio(Function<Double, Double> f, double a, double b, int n) {
-        double h = (b - a) / n;
+    private double integrateTrapezium(DoubleFunction<Double> f, double a, double b, int n) {
+        double h = (b - a) / n;  // Paso
         double sum = 0.0;
 
         for (int i = 0; i < n; i++) {
-            double mid = a + (i + 0.5) * h;
-            sum += f.apply(mid);
+            double x1 = a + i * h;
+            double x2 = a + (i + 1) * h;
+            sum += 0.5 * (f.apply(x1) + f.apply(x2)) * h;
         }
 
-        return h * sum;
+        return sum;
+    }
+
+    private double integratePuntoMedio(DoubleFunction<Double> f, double a, double b, int n) {
+        double h = (b - a) / n;  // Paso
+        double sum = 0.0;
+
+        for (int i = 0; i < n; i++) {
+            double x1 = a + i * h;
+            double midpoint = x1 + 0.5 * h;
+            sum += f.apply(midpoint) * h;
+        }
+
+        return sum;
     }
 
     public void setHelloProxy(HelloPrx hello2) {
